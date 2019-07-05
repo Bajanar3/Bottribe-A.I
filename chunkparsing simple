@@ -1,0 +1,59 @@
+import nltk
+
+"""This is a bit of code to extract noun phrases and verb phrases from text. 
+there is room for improvement in the code output.
+
+Requires nltk library."""
+
+def MyParser():
+    readerfile = input("Enter file to parse: ")
+    fopen = open(readerfile,'r')
+    sentence = fopen.read()
+    data = nltk.tag.pos_tag(word_tokenize(sentence))
+    fopen.close()
+
+    writerfile = input("Enter location to write Noun phrases.\n Warning: this will overwrite all text in a file: ")
+    file = open(writerfile, "w+")
+
+    writerfile = input(
+        "Enter location and filename to write Verb phrases.\n Warning: this will overwrite all text in a file: ")
+    filev = open(writerfile, "w+")
+
+    grammar = r"""NP: {<|DT?>?<JJ.*><NN.*>+}"""
+    grammaraction = r"""VP: {<|VB.*>?<VB.*><TO|IN.*>+}"""
+
+    chunk = rxp(grammar)
+    chunkverb = rxp(grammaraction)
+    chunked = chunk.parse(data)
+    chunkedverb = chunkverb.parse(data)
+
+    """This chunks and writes nounphrases to a text file."""
+    nounphrase = []
+    for subtree in chunked.subtrees(filter=lambda t: t.label()=='NP'):
+        nounphrase.append(subtree.leaves())
+    try:
+        for i in nounphrase:
+            file.write(str(i))
+            file.write("\n")
+        file.close()
+        print("Success")
+    except:
+        print("Process fail.")
+        file.close()
+
+    """This will chunk and write verb phrases to a text file"""
+    
+    verbphrase = []
+    for subtree in chunkedverb.subtrees(filter=lambda t: t.label() == 'VP'):
+        verbphrase.append(subtree.leaves())
+    try:
+        for i in verbphrase:
+            filev.write(str(i))
+            filev.write("\n")
+        filev.close()
+        print("Success")
+    except:
+        print("Process fail.")
+        filev.close()
+
+"""End of code: S. Antonio Hollingsworth"""
